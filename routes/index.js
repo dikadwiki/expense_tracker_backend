@@ -1,6 +1,8 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { ControllerPengeluaran, ControllerKategori } = require('../controllers');
+const auth = require('../middleware/auth');
+const authRoutes = require('./auth');
 
 const router = express.Router();
 
@@ -44,20 +46,19 @@ const validasiKategori = [
         .withMessage('Format warna harus berupa hex color (#RRGGBB)')
 ];
 
-// Routes untuk pengeluaran
-router.get('/pengeluaran', ControllerPengeluaran.dapatkanSemua);
-router.get('/pengeluaran/ringkasan', ControllerPengeluaran.dapatkanRingkasan);
-router.get('/pengeluaran/:id', ControllerPengeluaran.dapatkanBerdasarkanId);
-router.post('/pengeluaran', validasiPengeluaran, ControllerPengeluaran.tambah);
-router.put('/pengeluaran/:id', validasiPengeluaran, ControllerPengeluaran.perbarui);
-router.delete('/pengeluaran/:id', ControllerPengeluaran.hapus);
+// Routes untuk authentication (tidak perlu auth middleware)
+router.use('/auth', authRoutes);
 
-// Routes untuk kategori
-router.get('/kategori', ControllerKategori.dapatkanSemua);
-router.get('/kategori/:id', ControllerKategori.dapatkanBerdasarkanId);
-router.post('/kategori', validasiKategori, ControllerKategori.tambah);
-router.put('/kategori/:id', validasiKategori, ControllerKategori.perbarui);
-router.delete('/kategori/:id', ControllerKategori.hapus);
+// Routes untuk pengeluaran (perlu autentikasi)
+router.get('/pengeluaran', auth, ControllerPengeluaran.dapatkanSemua);
+router.get('/pengeluaran/ringkasan', auth, ControllerPengeluaran.dapatkanRingkasan);
+router.get('/pengeluaran/:id', auth, ControllerPengeluaran.dapatkanBerdasarkanId);
+router.post('/pengeluaran', auth, validasiPengeluaran, ControllerPengeluaran.tambah);
+router.put('/pengeluaran/:id', auth, validasiPengeluaran, ControllerPengeluaran.perbarui);
+router.delete('/pengeluaran/:id', auth, ControllerPengeluaran.hapus);
+
+// Routes untuk kategori (perlu autentikasi) - hanya GET untuk daftar kategori global
+router.get('/kategori', auth, ControllerKategori.dapatkanSemua);
 
 // Route untuk health check
 router.get('/health', (req, res) => {

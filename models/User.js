@@ -1,5 +1,5 @@
 // models/User.js
-const db = require('../config/database');
+const { koneksiDatabase } = require('../config/database');
 const bcrypt = require('bcryptjs');
 
 class User {
@@ -7,7 +7,7 @@ class User {
     static async create({ username, email, password }) {
         try {
             const hashedPassword = await bcrypt.hash(password, 12);
-            const [result] = await db.execute(
+            const [result] = await koneksiDatabase.execute(
                 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
                 [username, email, hashedPassword]
             );
@@ -20,7 +20,7 @@ class User {
     // Mencari user berdasarkan email
     static async findByEmail(email) {
         try {
-            const [rows] = await db.execute(
+            const [rows] = await koneksiDatabase.execute(
                 'SELECT * FROM users WHERE email = ?',
                 [email]
             );
@@ -33,7 +33,7 @@ class User {
     // Mencari user berdasarkan username
     static async findByUsername(username) {
         try {
-            const [rows] = await db.execute(
+            const [rows] = await koneksiDatabase.execute(
                 'SELECT * FROM users WHERE username = ?',
                 [username]
             );
@@ -46,7 +46,7 @@ class User {
     // Mencari user berdasarkan ID
     static async findById(id) {
         try {
-            const [rows] = await db.execute(
+            const [rows] = await koneksiDatabase.execute(
                 'SELECT id, username, email, created_at FROM users WHERE id = ?',
                 [id]
             );
@@ -64,11 +64,38 @@ class User {
     // Update user profile
     static async update(id, { username, email }) {
         try {
-            await db.execute(
+            await koneksiDatabase.execute(
                 'UPDATE users SET username = ?, email = ? WHERE id = ?',
                 [username, email, id]
             );
             return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Update user password
+    static async updatePassword(id, newPassword) {
+        try {
+            const hashedPassword = await bcrypt.hash(newPassword, 12);
+            await koneksiDatabase.execute(
+                'UPDATE users SET password = ? WHERE id = ?',
+                [hashedPassword, id]
+            );
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Get user with password (untuk verifikasi password lama)
+    static async findByIdWithPassword(id) {
+        try {
+            const [rows] = await koneksiDatabase.execute(
+                'SELECT * FROM users WHERE id = ?',
+                [id]
+            );
+            return rows[0];
         } catch (error) {
             throw error;
         }
