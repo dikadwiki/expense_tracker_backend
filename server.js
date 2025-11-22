@@ -37,7 +37,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
     res.json({
         sukses: true,
-        pesan: 'Selamat datang di API Expense Tracker',
+        pesan: 'Selamat datang di API DN EXPENSE',
         versi: '1.0.0',
         dokumentasi: '/api/health'
     });
