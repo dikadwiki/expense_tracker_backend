@@ -52,3 +52,4 @@ WHERE NOT EXISTS (SELECT 1 FROM kategori WHERE nama = 'Lainnya');
 -- 3. Buat unique constraint baru (hanya nama, tanpa user_id)
 -- 4. Insert 8 kategori default jika belum ada
 
+

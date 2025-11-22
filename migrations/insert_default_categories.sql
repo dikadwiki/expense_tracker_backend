@@ -20,3 +20,4 @@ ON DUPLICATE KEY UPDATE nama = nama;
 -- Catatan: ON DUPLICATE KEY UPDATE akan skip jika kategori dengan nama yang sama sudah ada
 -- Pastikan unique constraint unique_kategori_user sudah dihapus atau diubah untuk user_id = 0
 
+

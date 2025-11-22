@@ -58,3 +58,4 @@ UPDATE pengeluaran SET user_id = 1 WHERE user_id = 0 OR user_id IS NULL;
 -- - Pastikan user dengan id = 1 ada di tabel users
 -- - Jika tidak ada user dengan id = 1, buat dulu atau ganti dengan user_id yang valid
 
+
